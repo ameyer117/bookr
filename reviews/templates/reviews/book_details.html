@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="card" style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">{{ book.title }}
+                {% if rating %}
+                    <span class="badge badge-pill badge-success">{{ rating }}</span>
+                {% endif %}
+            </h5>
+            <p class="card-text">
+                {{ book.publisher.name }}<br/>
+                {{ book.publication_date }} <br/>
+            </p>
+        </div>
+        <ul class="list-group list-group-flush">
+            {% for review in reviews %}
+                <li class="list-group-item">
+                    <span class="badge badge-pill badge-success">{{ review.rating }}</span> {{ review.content }} <br />
+                    <small>- {{ review.creator }}</small>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

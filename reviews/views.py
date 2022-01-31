@@ -1,13 +1,21 @@
 from django.shortcuts import render
 
+from reviews.forms import SearchForm
 from reviews.models import Book
 from reviews.utils import average_rating
 from django.shortcuts import get_object_or_404
 
 
 def book_list(request):
+    form = SearchForm(request.GET)
     books = Book.objects.order_by('-publication_date')
     book_records = []
+
+    if form.is_valid() and form.cleaned_data['search_in'] == 'title':
+        books = books.filter(title__icontains=form.cleaned_data['search'])
+    elif form.is_valid() and form.cleaned_data['search_in'] == 'contributor':
+        books = books.filter(contributors__first_names__icontains=form.cleaned_data['search']) | \
+            books.filter(contributors__last_names__icontains=form.cleaned_data['search'])
 
     for book in books:
         reviews = book.review_set.all()
@@ -23,11 +31,10 @@ def book_list(request):
             'number_of_reviews': number_of_reviews
         })
 
-        context = {
-            'book_list': book_records
-        }
-
-    return render(request, 'reviews/books_list.html', context)
+    return render(request, 'reviews/books_list.html', {
+        'book_list': book_records,
+        'form': form
+    })
 
 
 def book_details(request, book_id):

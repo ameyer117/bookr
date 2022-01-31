@@ -1,22 +1,24 @@
 {% extends "reviews/base.html" %}
 
 {% block content %}
-    <form>
-    {{ form }}
-    </form>
-<ul class="list-group">
-    {% for item in book_list %}
-        <li class="list-group-item">
-        Title: {{ item.book.title }} <br/>
-        Publisher: {{ item.book.publisher.name }} <br/>
-        Publication Date: {{ item.book.publication_date }} <br/>
-        Rating: <span class="badge badge-pill badge-success">{{ item.book_rating }}</span> <br/>
-        Number of reviews: {{ item.number_of_reviews }} <br/>
-        {% if not item.number_of_reviews %}
-            Provide a rating and write the first review for this book.<br/>
-        {% endif %}
-        <a href="/reviews/{{ item.book.id }}" class="btn btn-primary">Reviews</a>
-        </li>
-    {% endfor %}
-</ul>
+    <div class="bg-white d-flex align-items-center p-4">
+        <form>
+            {{ form }}
+        </form>
+    </div>
+    <ul class="list-group">
+        {% for item in book_list %}
+            <li class="list-group-item">
+                Title: {{ item.book.title }} <br/>
+                Publisher: {{ item.book.publisher.name }} <br/>
+                Publication Date: {{ item.book.publication_date }} <br/>
+                Rating: <span class="badge badge-pill badge-success">{{ item.book_rating }}</span> <br/>
+                Number of reviews: {{ item.number_of_reviews }} <br/>
+                {% if not item.number_of_reviews %}
+                    Provide a rating and write the first review for this book.<br/>
+                {% endif %}
+                <a href="/reviews/{{ item.book.id }}" class="btn btn-primary">Reviews</a>
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock %}

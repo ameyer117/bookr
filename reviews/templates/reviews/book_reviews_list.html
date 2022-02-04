@@ -1,20 +1,32 @@
 {% extends "base.html" %}
 
 {% block content %}
-    {% for message in messages %}
-        <div class="alert alert-{{ message.level_tag }}">
-            <em>{{ message.level_tag|title }}:</em> {{ message }}
+    <div class="container">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.level_tag }}">
+                <em>{{ message.level_tag|title }}:</em> {{ message }}
+            </div>
+        {% endfor %}
+        <h1>Reviews for: {{ book.title }}</h1>
+        <div class="row justify-content-around">
+            {% for review in reviews %}
+                <div class="card col col-lg-3" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ review.content }}</h5>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Rating: {{ review.rating }}</li>
+                        <li class="list-group-item">Creator: {{ review.creator|title }}</li>
+                    </ul>
+                    <div class="card-body">
+                        <a href="{% url 'review_edit' book_pk=book.pk review_pk=review.pk %}" class="card-link">Edit</a>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-    {% endfor %}
-    <h1>Reviews for: {{ book.title }}</h1>
-    {% for review in reviews %}
-        <div class="p-3 bg-white">
-            <p>Content: {{ review.content }}</p>
-            <p>Rating: {{ review.rating }}</p>
-            <p>Creator: {{ review.creator|title }}</p>
-            <a href="{% url 'review_edit' book_pk=book.pk review_pk=review.pk %}">Edit</a>
-        </div>
-    {% endfor %}
-    <a class="btn btn-primary" href="{% url 'review_create' book_pk=book.pk %}">Add Review</a>
-    <a class="btn btn-primary ms-3" href="{% url 'book_media' book_pk=book.pk %}">Add Media</a>
+        <hr>
+        <a class="btn btn-primary" href="{% url 'review_create' book_pk=book.pk %}">Add Review</a>
+        <a class="btn btn-primary ms-3" href="{% url 'book_media' book_pk=book.pk %}">Add Media</a>
+    </div>
+
 {% endblock %}

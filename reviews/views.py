@@ -75,10 +75,12 @@ def publisher_edit(request, pk=None):
                 messages.success(request, f"Publisher {updated_publisher} was created.")
             return redirect("publisher_edit", updated_publisher.pk)
         else:
-            return render(request, "reviews/instance-form.html", {'method': request.method, 'form': form})
+            return render(request, "reviews/instance-form.html",
+                          {'method': request.method, 'form': form, 'model': 'Publisher'})
     else:
         form = PublisherForm(instance=publisher)
-        return render(request, "reviews/instance-form.html", {'method': request.method, 'form': form})
+        return render(request, "reviews/instance-form.html",
+                      {'method': request.method, 'form': form, 'model': 'Publisher'})
 
 
 def review_edit(request, book_pk, review_pk=None):
@@ -95,7 +97,8 @@ def review_edit(request, book_pk, review_pk=None):
                 messages.success(request, "Updated review successfully")
                 return redirect('review_edit', book_pk, saved_review.pk)
             else:
-                return render(request, "reviews/instance-form.html", {'method': request.method, 'form': form})
+                return render(request, "reviews/instance-form.html",
+                              {'method': request.method, 'form': form, 'model': 'Review'})
         else:
             form = ReviewForm(request.POST)
             if form.is_valid():
@@ -106,14 +109,16 @@ def review_edit(request, book_pk, review_pk=None):
                 messages.success(request, "Created review successfully")
                 return redirect("book_reviews_list", book_pk)
             else:
-                return render(request, "reviews/instance-form.html", {'method': request.method, 'form': form})
+                return render(request, "reviews/instance-form.html",
+                              {'method': request.method, 'form': form, 'model': 'Review'})
     else:
         if review_pk:
             instance = get_object_or_404(Review, pk=review_pk)
             form = ReviewForm(instance=instance)
         else:
             form = ReviewForm()
-        return render(request, "reviews/instance-form.html", {'method': request.method, 'form': form})
+        return render(request, "reviews/instance-form.html",
+                      {'method': request.method, 'form': form, 'model': 'Review'})
 
 
 def book_media(request, book_pk):
@@ -137,4 +142,5 @@ def book_media(request, book_pk):
             return redirect("book_details", book_pk)
 
     form = BookMediaForm(instance=book)
-    return render(request, "reviews/instance-form.html", {'method': request.method, 'form': form, 'is_file_form': True})
+    return render(request, "reviews/instance-form.html",
+                  {'method': request.method, 'form': form, 'is_file_form': True, 'model': 'Media'})

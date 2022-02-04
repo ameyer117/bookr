@@ -8,9 +8,9 @@
         {% endfor %}
         <h1>
             {% if form.initial %}
-                Update Publisher: {{ form.initial.name }}
+                Update {{ model }}: {{ form.initial.name }}
             {% else %}
-                New Publisher
+                New {{ model }}
             {% endif %}
         </h1>
         <form method="post"

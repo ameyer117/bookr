@@ -1,6 +1,6 @@
 from django import forms
 
-from reviews.models import Publisher, Review
+from reviews.models import Publisher, Review, Book
 
 
 class SearchForm(forms.Form):
@@ -20,3 +20,10 @@ class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
         exclude = ('date_edited', 'book')
+
+
+class BookMediaForm(forms.ModelForm):
+    class Meta:
+        model = Book
+        fields = ('cover', 'sample')
+

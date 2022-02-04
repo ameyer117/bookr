@@ -16,4 +16,5 @@
         </div>
     {% endfor %}
     <a class="btn btn-primary" href="{% url 'review_create' book_pk=book.pk %}">Add Review</a>
+    <a class="btn btn-primary ms-3" href="{% url 'book_media' book_pk=book.pk %}">Add Media</a>
 {% endblock %}

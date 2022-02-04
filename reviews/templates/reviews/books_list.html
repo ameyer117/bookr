@@ -9,7 +9,7 @@
     <ul class="list-group">
         {% for item in book_list %}
             <li class="list-group-item">
-                Title: {{ item.book.title }} <br/>
+                Title: <a href="{% url "book_details" book_pk=item.book.id %}">{{ item.book.title }}</a> <br/>
                 Publisher: {{ item.book.publisher.name }} <br/>
                 Publication Date: {{ item.book.publication_date }} <br/>
                 Rating: <span class="badge badge-pill badge-success">{{ item.book_rating }}</span> <br/>

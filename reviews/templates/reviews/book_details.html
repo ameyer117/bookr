@@ -1,7 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="card" style="width: 18rem;">
+    <div class="card m-3" style="width: 18rem;">
+        {% if book.cover %}
+            <a href="{% url "book_media" book_pk=book.id %}">
+                <img class="card-img-top bg-dark" src="{{ book.cover.url }}" alt="Card image cap">
+            </a>
+        {% endif %}
         <div class="card-body">
             <h5 class="card-title">{{ book.title }}
                 {% if rating %}
@@ -11,15 +16,25 @@
             <p class="card-text">
                 {{ book.publisher.name }}<br/>
                 {{ book.publication_date }} <br/>
+                {% if book.sample %}
+                    <a href="{{ book.sample.url }}">Sample</a>
+                {% endif %}
             </p>
+            {% if not book.cover %}
+                <a href="{% url "book_media" book_pk=book.id %}" class="card-link">Add Image</a>
+            {% endif %}
+            {% if not book.sample %}
+                <a href="{% url "book_media" book_pk=book.id %}" class="card-link">Add Sample</a>
+            {% endif %}
         </div>
         <ul class="list-group list-group-flush">
             {% for review in reviews %}
                 <li class="list-group-item">
-                    <span class="badge badge-pill badge-success">{{ review.rating }}</span> {{ review.content }} <br />
+                    <span class="badge badge-pill badge-success">{{ review.rating }}</span> {{ review.content }} <br/>
                     <small>- {{ review.creator }}</small>
                 </li>
             {% endfor %}
         </ul>
+
     </div>
 {% endblock %}

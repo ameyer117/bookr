@@ -12,7 +12,7 @@ from django.utils import timezone
 
 from reviews.forms import SearchForm, PublisherForm, ReviewForm, BookMediaForm
 from reviews.models import Book, Publisher, Review
-from reviews.utils import average_rating
+from reviews.utils import average_rating, build_search_history
 from django.shortcuts import get_object_or_404
 
 
@@ -25,11 +25,15 @@ def book_list(request):
     books = Book.objects.order_by('-publication_date')
     book_records = []
 
-    if form.is_valid() and form.cleaned_data['search_in'] == 'title':
-        books = books.filter(title__icontains=form.cleaned_data['search'])
-    elif form.is_valid() and form.cleaned_data['search_in'] == 'contributor':
-        books = books.filter(contributors__first_names__icontains=form.cleaned_data['search']) | \
-                books.filter(contributors__last_names__icontains=form.cleaned_data['search'])
+    if form.is_valid() and form.cleaned_data['search']:
+        search_history = request.session.get('search_history', [])
+        new_search = [form.cleaned_data['search'], form.cleaned_data['search_in']]
+        request.session['search_history'] = build_search_history(search_history, new_search)
+        if form.cleaned_data['search_in'] == 'title':
+            books = books.filter(title__icontains=form.cleaned_data['search'])
+        elif form.cleaned_data['search_in'] == 'contributor':
+            books = books.filter(contributors__first_names__icontains=form.cleaned_data['search']) | \
+                    books.filter(contributors__last_names__icontains=form.cleaned_data['search'])
 
     for book in books:
         reviews = book.review_set.all()

@@ -19,14 +19,21 @@
                         <li class="list-group-item">Creator: {{ review.creator|title }}</li>
                     </ul>
                     <div class="card-body">
-                        <a href="{% url 'review_edit' book_pk=book.pk review_pk=review.pk %}" class="card-link">Edit</a>
+                        {% if user.is_staff or review.creator.id == user.id %}
+                            <a href="{% url 'review_edit' book_pk=book.pk review_pk=review.pk %}"
+                               class="card-link">Edit</a>
+                        {% else %}
+                            <br>
+                        {% endif %}
                     </div>
                 </div>
             {% endfor %}
         </div>
         <hr>
-        <a class="btn btn-primary" href="{% url 'review_create' book_pk=book.pk %}">Add Review</a>
-        <a class="btn btn-primary ms-3" href="{% url 'book_media' book_pk=book.pk %}">Add Media</a>
+        {% if user.is_authenticated %}
+            <a class="btn btn-primary" href="{% url 'review_create' book_pk=book.pk %}">Add Review</a>
+            <a class="btn btn-primary ms-3" href="{% url 'book_media' book_pk=book.pk %}">Add Media</a>
+        {% endif %}
     </div>
 
 {% endblock %}

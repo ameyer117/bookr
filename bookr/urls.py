@@ -17,12 +17,15 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls import static
 from bookr import settings
+from .views import profile
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('reviews.urls'))
+    path('', include('reviews.urls')),
+    path('accounts/profile/', profile, name='profile'),
+    path('accounts/', include(('django.contrib.auth.urls', 'auth'),
+                              namespace='accounts'))
 ]
 
 if settings.DEBUG:
     urlpatterns += static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-

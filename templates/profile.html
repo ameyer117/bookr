@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Bookr{% endblock %}
+
+{% block content %}
+    <div class="container mt-3">
+        <div class="row justify-content-around">
+            <div class="col-5 bg-white rounded">
+                <h3>Profile</h3>
+                <p>
+                    Username: {{ request.user.username }}
+                </p>
+                <p>
+                    Name: {{ request.user.first_name }} {{ request.user.last_name }}
+                </p>
+                <p>
+                    Date Joined: {{ request.user.date_joined }}
+                </p>
+                <p>
+                    Email: {{ request.user.email }}
+                </p>
+                <p>
+                    Last Login: {{ request.user.last_login }}
+                </p>
+            </div>
+            <div class="col-5 bg-white rounded">
+                <h3>Viewed Books:</h3>
+                {% for id, title in request.session.viewed_books %}
+                    <p>{{ title }}</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

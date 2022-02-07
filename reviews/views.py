@@ -3,6 +3,8 @@ from io import BytesIO
 
 from PIL import Image
 from django.contrib import messages
+from django.contrib.auth.decorators import user_passes_test, login_required
+from django.core.exceptions import PermissionDenied
 from django.core.files import File
 from django.core.files.images import ImageFile
 from django.shortcuts import render, redirect
@@ -12,6 +14,10 @@ from reviews.forms import SearchForm, PublisherForm, ReviewForm, BookMediaForm
 from reviews.models import Book, Publisher, Review
 from reviews.utils import average_rating
 from django.shortcuts import get_object_or_404
+
+
+def is_staff_user(user):
+    return user.is_staff
 
 
 def book_list(request):
@@ -50,6 +56,16 @@ def book_details(request, book_pk):
     reviews = book.review_set.order_by('-date_created')
     rating = average_rating([review.rating for review in reviews])
 
+    if request.user.is_authenticated:
+        max_viewed_books_length = 10
+        viewed_books = request.session.get('viewed_books', [])
+        viewed_book = [book.id, book.title]
+        if viewed_book in viewed_books:
+            viewed_book.pop(viewed_books.index(viewed_book))
+        viewed_books.insert(0, viewed_book)
+        viewed_books = viewed_books[:max_viewed_books_length]
+        request.session['viewed_books'] = viewed_books
+
     return render(request, 'reviews/book_details.html', {'book': book, 'reviews': reviews, 'rating': rating})
 
 
@@ -59,6 +75,7 @@ def book_reviews_list(request, book_pk):
     return render(request, 'reviews/book_reviews_list.html', {'book': book, 'reviews': reviews})
 
 
+@user_passes_test(is_staff_user)
 def publisher_edit(request, pk=None):
     if pk is not None:
         publisher = get_object_or_404(Publisher, pk=pk)
@@ -83,11 +100,15 @@ def publisher_edit(request, pk=None):
                       {'method': request.method, 'form': form, 'model': 'Publisher'})
 
 
+@login_required
 def review_edit(request, book_pk, review_pk=None):
     if request.method == 'POST':
         book = get_object_or_404(Book, pk=book_pk)
         if review_pk:
             review = get_object_or_404(Review, pk=review_pk)
+            if not request.user.is_staff and review.creator.id != request.user.id:
+                raise PermissionDenied()
+
             form = ReviewForm(request.POST, instance=review)
             if form.is_valid():
                 saved_review = form.save(commit=False)
@@ -114,6 +135,9 @@ def review_edit(request, book_pk, review_pk=None):
     else:
         if review_pk:
             instance = get_object_or_404(Review, pk=review_pk)
+            if not request.user.is_staff and instance.creator.id != request.user.id:
+                raise PermissionDenied()
+
             form = ReviewForm(instance=instance)
         else:
             form = ReviewForm()
@@ -121,6 +145,7 @@ def review_edit(request, book_pk, review_pk=None):
                       {'method': request.method, 'form': form, 'model': 'Review'})
 
 
+@login_required
 def book_media(request, book_pk):
     book = get_object_or_404(Book, pk=book_pk)
 
